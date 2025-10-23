@@ -1,46 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { getTasks, addTask, deleteTask, updateTask } from "./api";
-import TaskForm from "./components/TaskForm";
-import TaskList from "./components/TaskList";
-import "./App.css";
-function App() {
-const [tasks, setTasks] = useState([]);
-useEffect(() => {
-fetchTasks();
-}, []);
-const fetchTasks = async () => {
-const response = await getTasks();
-setTasks(response.data);
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import BookList from "./pages/BookList";
+import BookDetail from "./components/BookDetail";
+
+const App = () => {
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h1>📚 Book Explorer</h1>
+      <Routes>
+        <Route path="/" element={<BookList />} />
+        <Route path="/book/:id" element={<BookDetail />} />
+      </Routes>
+    </div>
+  );
 };
-const handleAddTask = async (title) => {
-const newTask = { title, completed: false };
-const response = await addTask(newTask);
-setTasks([...tasks, response.data]);
-};
-const handleDeleteTask = async (id) => {
-await deleteTask(id);
-setTasks(tasks.filter((task) => task.id !== id));
-};
-const toggleTaskCompletion = async (id) => {
-const task = tasks.find((t) => t.id === id);
-const updatedTask = { ...task, completed: !task.completed };
-await updateTask(id, updatedTask);
-setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
-};
-return (
-<div className="App">
-<h1> To-Do List</h1>
-<TaskForm onAddTask={handleAddTask} />
-{tasks.length === 0 ? (
-<p>No tasks yet! Add your first one below </p>
-) : (
-<TaskList
-tasks={tasks}
-onDelete={handleDeleteTask}
-onToggle={toggleTaskCompletion}
-/>
-)}
-</div>
-);
-}
+
 export default App;
